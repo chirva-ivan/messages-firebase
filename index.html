@@ -16,23 +16,34 @@
 	<script src="auth/auth.js"></script>
 
 </head>
-<body ng-app="messegeApp">
+<body ng-app="messageApp">
 	<div ng-controller="authController">
-		<h1>Login</h1>
+		<h1>Login</h1>		
 		<label>Email</label>
 		<input type="email" ng-model="auth.email">
 		<label>Password</label>
 		<input type="password" ng-model="auth.password">
-		<span>Login</span>
-
+		<span ng-click="login()">Login</span>
+		<span ng-click="get()">GET</span>
+		<span ng-click="go()">GO!</span>
 		<h1>Register</h1>
 		<label>User Name</label>
-		<input type="text" ng-model="auth.username">
+		<input type="text" ng-model="authNew.username">
 		<label>Email</label>
-		<input type="email" ng-model="auth.email">
+		<input type="email" ng-model="authNew.email">
 		<label>Password</label>
-		<input type="password" ng-model="auth.password">
+		<input type="password" ng-model="authNew.password">
 		<span ng-click="createUser()">Register</span>
+		<div>
+			<h1>Current user: {{currentUser.password.email}}</h1>
+			<input type="text" ng-model="message" placeholder="Your Message Here">
+			<button ng-click="sendMessage()">Save</button>
+		</div>
+	    	<ul>
+      		<li ng-repeat="message in messages">{{currentUser.password.email}} says: {{message.content}}
+				<button ng-click="messages.$remove(message)">x</button>
+			</li>
+    		</ul>
 	</div>
 </body>
 </html>
