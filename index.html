@@ -12,38 +12,44 @@
 
 	<!-- AngularFire -->
 	<script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
-
-	<script src="auth/auth.js"></script>
+	
+	<script src="service.js"></script>
+	<script src="main.js"></script>
 
 </head>
 <body ng-app="messageApp">
-	<div ng-controller="authController">
-		<h1>Login</h1>		
-		<label>Email</label>
-		<input type="email" ng-model="auth.email">
-		<label>Password</label>
-		<input type="password" ng-model="auth.password">
-		<span ng-click="login()">Login</span>
-		<span ng-click="get()">GET</span>
-		<span ng-click="go()">GO!</span>
-		<h1>Register</h1>
-		<label>User Name</label>
-		<input type="text" ng-model="authNew.username">
-		<label>Email</label>
-		<input type="email" ng-model="authNew.email">
-		<label>Password</label>
-		<input type="password" ng-model="authNew.password">
-		<span ng-click="createUser()">Register</span>
-		<div>
-			<h1>Current user: {{currentUser.password.email}}</h1>
-			<input type="text" ng-model="message" placeholder="Your Message Here">
-			<button ng-click="sendMessage()">Save</button>
+	<div ng-controller="mainController">
+		<div ng-hide="currentUser">
+			<h1>Login</h1>		
+			<label>Email</label>
+			<input type="email" ng-model="email">
+			<label>Password</label>
+			<input type="password" ng-model="password">
+			<a href='' ng-click="login()">Login</a>
+			<span ng-click="get()">GET DATA</span>
+			<h1>Register</h1>
+			<label>User Name</label>
+			<input type="text" ng-model="usernameNew">
+			<label>Email</label>
+			<input type="email" ng-model="emailNew">
+			<label>Password</label>
+			<input type="password" ng-model="passwordNew">
+			<a href='' ng-click="createUser()">Register</a>
 		</div>
-	    	<ul>
-      		<li ng-repeat="message in messages">{{currentUser.password.email}} says: {{message.content}}
-				<button ng-click="messages.$remove(message)">x</button>
-			</li>
-    		</ul>
+		<div ng-show="currentUser">
+			<h1>Current user: {{currentUser.userInfo.username}}</h1>
+			<input type="text" ng-model="messagePost" placeholder="Your Message Here">
+			<button ng-click="sendMessage()">Send</button>
+			<button ng-click="logout()">Logout</button>
+			<table>
+      				<tr ng-repeat="message in messages">
+					<td><span>{{message.author}}:</td>
+					<td><span><b>{{message.content}}</b></span></td>
+					<td><span>{{message.date}}</span></td>
+					<td><button ng-click="messages.$remove(message)">x</button></td>
+				</tr>
+    			</table>
+		</div>
 	</div>
 </body>
 </html>
