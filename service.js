@@ -7,7 +7,7 @@ app.factory("Auth", ["$firebaseAuth",
   }
 ]);
 
-app.factory("UserRef", function() {
+app.factory("Users", function() {
     var ref = new Firebase("https://blinding-torch-9498.firebaseio.com/users/");
     return ref;
   }

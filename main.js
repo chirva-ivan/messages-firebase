@@ -1,4 +1,5 @@
-app.controller("mainController", ["$scope", "Auth", "UserRef", "Messages", function($scope, Auth, UserRef, Messages) {
+app.controller("mainController", ["$scope", "Auth", "Users", "Messages", 
+  function($scope, Auth, Users, Messages) {
 
   $scope.createUser = function () {
     Auth.$createUser({
@@ -14,7 +15,7 @@ app.controller("mainController", ["$scope", "Auth", "UserRef", "Messages", funct
     		email: $scope.emailNew
     	};
   		       
-  	UserRef.child(userData.uid).set(userInfo);
+  	Users.child(userData.uid).set(userInfo);
 
    	console.log("User created: " + userData.uid);
     	$scope.usernameNew = '';
@@ -26,7 +27,7 @@ app.controller("mainController", ["$scope", "Auth", "UserRef", "Messages", funct
     //temporary function for getting data
   $scope.get = function () {  
   	console.log($scope.currentUser);
-      UserRef.on("value", function(snapshot) {
+      Users.on("value", function(snapshot) {
         console.log(snapshot.val());
       });
   	console.log(Messages);
@@ -69,5 +70,5 @@ app.controller("mainController", ["$scope", "Auth", "UserRef", "Messages", funct
   	$scope.currentUser = null;
     Auth.$unauth();
   }
-  
+
 }]);
