@@ -6,11 +6,11 @@ app.controller("mainController", ["$scope", "Auth", "Users", "Messages",
     	email: $scope.emailNew,
        	password: $scope.passwordNew
      	}).then(function(userData) {
-  		
+  	
       //additional information for new user
       var userInfo = {
     		key: userData.uid,
-    		date: Firebase.ServerValue.TIMESTAMP,
+    		date: getCurrentDate(),
     		username: $scope.usernameNew,
     		email: $scope.emailNew
     	};
@@ -24,9 +24,10 @@ app.controller("mainController", ["$scope", "Auth", "Users", "Messages",
   	});
   };
 
-    //temporary function for getting data
+  //temporary function for getting data
   $scope.get = function () {  
-  	console.log($scope.currentUser);
+	console.log(getCurrentDate());
+ 	console.log($scope.currentUser);
       Users.on("value", function(snapshot) {
         console.log(snapshot.val());
       });
@@ -53,12 +54,11 @@ app.controller("mainController", ["$scope", "Auth", "Users", "Messages",
   };
 
   $scope.sendMessage = function () {
-  	var currentdate = new Date();
   	
   	Messages.$add({
   		content: $scope.messagePost,
   		author: $scope.currentUser.userInfo.username,
-  		date:	currentdate.getHours() + ":" + currentdate.getMinutes() + ":"  + currentdate.getSeconds()
+  		date: getCurrentDate()
   	});
 
   	$scope.messagePost = '';
@@ -68,7 +68,7 @@ app.controller("mainController", ["$scope", "Auth", "Users", "Messages",
 
   $scope.logout = function () {
   	$scope.currentUser = null;
-    Auth.$unauth();
+  	Auth.$unauth();
   }
 
 }]);
