@@ -1,74 +1,112 @@
-app.controller("mainController", ["$scope", "Auth", "Users", "Messages", 
-  function($scope, Auth, Users, Messages) {
+var app = angular.module("messageApp", ['ui.bootstrap']);
 
-  $scope.createUser = function () {
-    Auth.$createUser({
-    	email: $scope.emailNew,
-       	password: $scope.passwordNew
-     	}).then(function(userData) {
-  	
-      //additional information for new user
-      var userInfo = {
-    		key: userData.uid,
-    		date: getCurrentDate(),
-    		username: $scope.usernameNew,
-    		email: $scope.emailNew
-    	};
-  		       
-  	Users.child(userData.uid).set(userInfo);
+app.controller("mainController", ["$scope", function($scope) {
 
-   	console.log("User created: " + userData.uid);
-    	$scope.usernameNew = '';
-    	$scope.emailNew = '';
-    	$scope.passwordNew = '';
+  // temp stuff
+  $scope.email = 'ivan@m.ru';
+  $scope.password = '111111';
+  $scope.get = function() {firebase.database().ref('/messages/').on('value', function(snapshot) {
+    	console.log(snapshot.val());
+    });
+  };
+
+  // user create function	
+  $scope.createUser = function() {
+    firebase.auth().createUserWithEmailAndPassword($scope.emailNew, $scope.passwordNew)
+
+  	// error message
+  	.catch(function(error) {
+  		alert(error);
+
+  	// add a name for just created user
+  	}).then(function(userData) {
+  		userData.updateProfile({
+    			displayName: $scope.usernameNew
+  	})
+
+  	// make input fields empty
+  	}).then(function() {		
+  		$scope.usernameNew = '';
+  		$scope.emailNew = '';
+  		$scope.passwordNew = '';
+  		$scope.$apply();
   	});
   };
 
-  //temporary function for getting data
-  $scope.get = function () {  
-	console.log(getCurrentDate());
- 	console.log($scope.currentUser);
-      Users.on("value", function(snapshot) {
-        console.log(snapshot.val());
-      });
-  	console.log(Messages);
-  };
-    
-  $scope.login = function () {
-  	Auth.$authWithPassword({
-  		email: $scope.email,
-  		password: $scope.password
-    }).then(function(authData) {
-    	$scope.email = '';
-    	$scope.password = '';
-    	$scope.currentUser = authData;
+  // user sign in function
+  $scope.signIn = function() {
+    firebase.auth().signInWithEmailAndPassword($scope.email, $scope.password)
+	
+  	// error message
+  	.catch(function(error) {
+  		alert(error);	
+	
+  	// we need $scope.currentUser to store current signin user
+  	}).then(function() {
+  		$scope.currentUser = firebase.auth().currentUser;		
+  		console.log('Sign as: ' + $scope.currentUser.displayName);
 
-    	var ref = new Firebase("https://blinding-torch-9498.firebaseio.com/users/" + authData.uid + "/");
-    		
-    	ref.on("value", function(snapshot) {				
-    		$scope.currentUser.userInfo = snapshot.val()
-    	});
-    }), function() {
-  		remember: "sessionOnly"
+  	// make input fields empty
+  	}).then(function() {
+  		$scope.email = '';
+  		$scope.password = '';
+  		$scope.$apply();
+  	});
+  };
+
+  // message set function
+  $scope.sendMessage = function() {
+	
+  	// get an unique ID of push() method
+  	var key = firebase.database().ref('messages/').push().key;
+
+  	// new message object with the saved unique ID
+  	var message = {
+     	username: $scope.currentUser.displayName,
+  		email: $scope.currentUser.email,
+      message: $scope.messagePost,
+  		dateText: getCurrentDate.get(),
+  		//dateMS: getCurrentDate.today,
+  		key: key
   	};
-  };
 
-  $scope.sendMessage = function () {
-  	
-  	Messages.$add({
-  		content: $scope.messagePost,
-  		author: $scope.currentUser.userInfo.username,
-  		date: getCurrentDate()
-  	});
+  	// set our message into directory with an unique ID 
+  	firebase.database().ref('messages/' + key).set(message);	
 
+  	// make input field empty
   	$scope.messagePost = '';
+  	$scope.$apply();
   };
 
-  $scope.messages = Messages;
+  // run function with a list of messages as an argument
+  firebase.database().ref('/messages/').on('value', function(snapshot) {
+  	getMessages(snapshot.val());
+  });
 
-  $scope.logout = function () {
-  	$scope.currentUser = null;
-  	Auth.$unauth();
-  }
+  // get list of  messages 
+  getMessages = function(messages) {
+	  $scope.messages = messages;
+  };
 
+  // remove a single message
+  $scope.remove = function(message) {
+	  firebase.database().ref('/messages/' + message.key).remove();
+  };
+
+  // 
+  $scope.signOut = function() {
+  	firebase.auth().signOut().then(function() {
+  		$scope.currentUser = null;
+  		$scope.$apply();
+  	});
+  };
+
+  // send message on ENTER
+  var $messageBox = $("#message-box");
+
+  $messageBox.keyup(function(event){
+  	if(event.keyCode == 13) $scope.sendMessage();
+  });
+
+  //$scope.reverse = true;
 }]);
