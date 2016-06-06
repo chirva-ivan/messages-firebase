@@ -1,14 +1,6 @@
-var app = angular.module("messageApp", ['ui.bootstrap']);
+var app = angular.module("messageApp", []);
 
 app.controller("mainController", ["$scope", function($scope) {
-
-  // temp stuff
-  $scope.email = 'ivan@m.ru';
-  $scope.password = '111111';
-  $scope.get = function() {firebase.database().ref('/messages/').on('value', function(snapshot) {
-    	console.log(snapshot.val());
-    });
-  };
 
   // user create function	
   $scope.createUser = function() {
@@ -20,9 +12,9 @@ app.controller("mainController", ["$scope", function($scope) {
 
   	// add a name for just created user
   	}).then(function(userData) {
-  		userData.updateProfile({
+    		userData.updateProfile({
     			displayName: $scope.usernameNew
-  	})
+    	})
 
   	// make input fields empty
   	}).then(function() {		
@@ -54,28 +46,46 @@ app.controller("mainController", ["$scope", function($scope) {
   	});
   };
 
+  // sign in anonymously function
+  $scope.signInAnon = function() {
+	firebase.auth().signInAnonymously()
+	  .catch(function(error) {
+  		alert(error);	
+	
+  	  // we need $scope.currentUser to store current signin user
+  	  }).then(function() {
+		    $scope.currentUser = {};
+  		  $scope.currentUser.displayName = 'Anon' + Math.round(Math.random()*100000);	
+		    $scope.currentUser.email = '';
+		    console.log('Sign as: ' + $scope.currentUser.displayName);
+		    $scope.$apply();
+  	  });
+  };
+
   // message set function
   $scope.sendMessage = function() {
-	
-  	// get an unique ID of push() method
-  	var key = firebase.database().ref('messages/').push().key;
 
-  	// new message object with the saved unique ID
-  	var message = {
-     	username: $scope.currentUser.displayName,
-  		email: $scope.currentUser.email,
-      message: $scope.messagePost,
-  		dateText: getCurrentDate.get(),
-  		//dateMS: getCurrentDate.today,
-  		key: key
+	if($scope.messagePost !== '') {
+	
+    	// get an unique ID of push() method
+    	var key = firebase.database().ref('messages/').push().key;
+
+    	// new message object with the saved unique ID
+    	var message = {
+     	  username: $scope.currentUser.displayName,
+    	  email: $scope.currentUser.email,
+        message: $scope.messagePost,
+    	  dateText: currentDate.get(),
+    	  dateMS: currentDate.now(),
+    	  key: key
+      };
   	};
 
   	// set our message into directory with an unique ID 
   	firebase.database().ref('messages/' + key).set(message);	
 
   	// make input field empty
-  	$scope.messagePost = '';
-  	$scope.$apply();
+  	$scope.messagePost = '';  	
   };
 
   // run function with a list of messages as an argument
@@ -105,8 +115,16 @@ app.controller("mainController", ["$scope", function($scope) {
   var $messageBox = $("#message-box");
 
   $messageBox.keyup(function(event){
-  	if(event.keyCode == 13) $scope.sendMessage();
+  	if(event.keyCode == 13) { 
+  	  $scope.sendMessage();
+  	  $scope.$apply();
+  	};
   });
+  
+  // how much messages will be showed
+  $scope.messagesLimit = 5;
+  $scope.showMoreMessages = function() {
+	  $scope.messagesLimit += 5;
+  };
 
-  //$scope.reverse = true;
 }]);
