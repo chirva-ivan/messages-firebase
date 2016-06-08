@@ -38,21 +38,22 @@
 			<div>or</div>
 			<a href='' ng-click="signInAnon()" class="btn text-center">Login<br>Anonymously</a>
 		</div>
-		<div ng-show="currentUser">
+		<form ng-show="currentUser" ng-focus="sendMessage()">
 			<h1>Current user: {{currentUser.displayName}}</h1>
+			<a href='' ng-click="signOut()" class="btn text-center">Logout</a>
 			<input type="text" ng-model="messagePost" placeholder="Your Message Here" class="form-control text-center" id="message-box">
-			<button ng-click="sendMessage()" class="btn btn-default">Send</button>
-			<button ng-click="signOut()" class="btn btn-default">Logout</button>
+			<input type="submit" value="Send" ng-click="sendMessage()" class="btn btn-default">
 			<table class="table table-striped">
-				<tr ng-repeat="message in messages | orderObjectBy:'dateMS':true" ng-if ="$index < messagesLimit">
+				<tr ng-repeat="message in messages | orderObjectBy:'dateMS':true" ng-if ="$index < messagesLimit.default">
 					<td><span>{{message.username}}: </td>
 					<td><span><b>{{message.message}}</b></span></td>
-					<td><span>{{message.dateText}}</span></td>
+					<td><span>{{message.dateAgo}}</span></td>
 					<td><button ng-click="remove(message)" class="btn btn-default">x</button></td>
 				</tr>				
 			</table>
-			<button ng-click="showMoreMessages()" class="btn btn-default">Show More</button>
-		</div>
+			<a href='' ng-click="messagesLimit.getMore()" class="btn text-center" ng-hide="messagesLimit.default >= messagesLimit.total">Show More</a>
+			<a href='' ng-click="messagesLimit.getLess()" class="btn text-center" ng-hide="messagesLimit.default <= 5">Show Less</a>
+		</form>
 	</div>
 </body>
 </html>
