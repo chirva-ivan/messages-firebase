@@ -47,7 +47,7 @@ app.controller("mainController", ["$scope", function($scope) {
   };
 
   // count for today's login anon
-  var anonRef = 'anonCount/' + currentDate.getDate().replace(/\//g,'_');
+  var anonRef = 'anonCount/' + Time.getDate().replace(/\//g,'_');
 
   firebase.database().ref(anonRef).on('value', function(snapshot) {
   	snapshot ? getAnonCount(snapshot.val()) : $scope.anonCount = 0;
@@ -71,7 +71,7 @@ app.controller("mainController", ["$scope", function($scope) {
   		firebase.database().ref(anonRef).set($scope.anonCount);
 
   		$scope.currentUser = {};
-  		$scope.currentUser.displayName = 'anon' + currentDate.getDate() + "#" + $scope.anonCount;
+  		$scope.currentUser.displayName = 'anon' + Time.getDate() + "#" + $scope.anonCount;
    		$scope.currentUser.email = '';
   		console.log('Sign as: ' + $scope.currentUser.displayName);
 		$scope.$apply();
@@ -81,7 +81,7 @@ app.controller("mainController", ["$scope", function($scope) {
   // message send function
   $scope.sendMessage = function() {
 
-	if($scope.messagePost !== '') {
+	  if($scope.messagePost !== '') {
 	
     	// get an unique ID of push() method
     	var key = firebase.database().ref('messages/').push().key;
@@ -91,8 +91,7 @@ app.controller("mainController", ["$scope", function($scope) {
      	  username: $scope.currentUser.displayName,
     	  email: $scope.currentUser.email,
         message: $scope.messagePost,
-    	  dateText: currentDate.getDate() + " - " + currentDate.getTime(),
-    	  dateMS: currentDate.now(),
+    	  dateMS: Time.now(),
     	  key: key
       };
   	};
@@ -119,7 +118,7 @@ app.controller("mainController", ["$scope", function($scope) {
     for (key in $scope.messages) {
 
       // call for function than set ago time 
-      $scope.messages[key].dateAgo = getTimeAgo.call($scope.messages[key]);
+      $scope.messages[key].dateAgo = Time.getTimeAgo.call($scope.messages[key]);
 
       // counting messages
       total++;
@@ -127,29 +126,9 @@ app.controller("mainController", ["$scope", function($scope) {
     };
   };
 
-  // how much time has passed after sending a message
-  function getTimeAgo() {
-    var timeRemain = currentDate.now() - this.dateMS;
-    var timeMsInOne = {
-    	second: 1000,
-    	minute: 60 * 1000,
-    	hour: 60 * 60 * 1000,
-    	day: 24 * 60 * 60 * 1000,
-    	week: 7 * 24 * 60 * 60 * 1000,
-    	month: 30 * 7 * 24 * 60 * 60 * 1000
-    };
-
-    if ((Math.round(timeRemain / timeMsInOne.second)) == 0) return 'just now';
-    if (timeRemain < timeMsInOne.minute) return Math.round(timeRemain / timeMsInOne.minute * 59) + ' sec ago';
-    if (timeRemain < timeMsInOne.hour) return Math.round(timeRemain / timeMsInOne.hour * 59) + ' min ago';
-    if (timeRemain < timeMsInOne.day) return Math.round(timeRemain / timeMsInOne.day * 23) + ' h ago';
-    if (timeRemain < timeMsInOne.week) return Math.round(timeRemain / timeMsInOne.week * 6) + ' d ago';
-    if (timeRemain < timeMsInOne.month) return Math.round(timeRemain / timeMsInOne.month * 29) + ' month ago';
-  };
-
   // remove a single message
   $scope.remove = function(message) {
-	  firebase.database().ref('/messages/' + message.key).remove();
+    firebase.database().ref('/messages/' + message.key).remove();
   };
 
   // sing out function
@@ -177,5 +156,7 @@ app.controller("mainController", ["$scope", function($scope) {
   	getMessages($scope.messages);
   	$scope.$apply();
   }, 1000);
+
+  getMessageRef();
 
 }]);
