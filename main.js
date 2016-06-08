@@ -174,7 +174,7 @@ app.controller("mainController", ["$scope", function($scope) {
 
   // auto update message list
   var updateMessages = setInterval(function() {
-  	getMessageRef();
+  	getMessages($scope.messages);
   	$scope.$apply();
   }, 1000);
 
