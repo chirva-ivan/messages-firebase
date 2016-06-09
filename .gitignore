@@ -1,0 +1,5 @@
+# NPM packages folder
+public/
+firebase.json
+database.rules.json
+.firebaserc
