@@ -7,5 +7,9 @@ app.config(function($routeProvider, $locationProvider) {
 		.when('/chat', {
 			templateUrl: 'template/chat.html',
 			controller: 'chatCtrl'
+		})
+		.when('/:username', {
+			templateUrl: 'template/userinfo.html',
+			controller: 'userinfoCtrl'
 		});
 });

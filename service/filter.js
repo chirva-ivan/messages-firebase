@@ -4,7 +4,7 @@ angular.module('messageApp').filter('orderObjectBy', function() {
     var filtered = [];
 
     angular.forEach(items, function(item) {
-      filtered.push(item);
+      if(item[field]) filtered.push(item);
     });
 
     filtered.sort(function (a, b) {

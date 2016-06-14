@@ -1,4 +1,4 @@
-app.controller('chatCtrl', ['$scope', 'currentUser', function($scope, currentUser) {
+app.controller('chatCtrl', ['$scope', 'currentUser', 'currentMessage', function($scope, currentUser, currentMessage) {
 
   $scope.currentUser = currentUser.get();
 	
@@ -14,65 +14,77 @@ app.controller('chatCtrl', ['$scope', 'currentUser', function($scope, currentUse
     		var message = {
      		  username: $scope.currentUser.displayName,
     		  email: $scope.currentUser.email,
-      		  message: $scope.messagePost,
+      		message: $scope.messagePost,
     		  dateMS: Time.now(),
+		      dateText: Time.getTimeText(),
     		  key: key
      		};
   	};
 
-  	// set our message into directory with an unique ID 
-  	firebase.database().ref('messages/' + key).set(message);	
+  	// set our message into directory with an unique ID
+	var date = Time.getDate();
+  	firebase.database().ref('messages/' + date + '/' + key).set(message);	
 
   	// make input field empty
   	$scope.messagePost = '';  	
   };
 
   // run function with a list of messages as an argument
-function getMessageRef() {
-  firebase.database().ref('/messages/').on('value', function(snapshot) {
-  	getMessages(snapshot.val());
-  });
-};
-
-  // get list of  messages
-  getMessages = function(messages) {
-	  $scope.messages = messages;
-	  var total = 0;
-	  for (key in $scope.messages) {
-	    $scope.messages[key].dateAgo = Time.getTimeAgo.call($scope.messages[key]);
-	    total++;
-	    $scope.messagesLimit.total = total; 
-	  };
+  function getMessageRef() {
+    firebase.database().ref('/messages/').on('value', function(snapshot) {
+    	
+      getMessage = function(value) {
+        $scope.messages = value;
+      	for (key in $scope.messages) {
+      		$scope.messages[key].date = key;
+      	};
+        console.log($scope.messages);
+      };
+      getMessage(snapshot.val());
+    });
   };
 
   // remove a single message
-  $scope.remove = function(message) {
-	  firebase.database().ref('/messages/' + message.key).remove();
+  $scope.remove = function(date, message) {
+	  firebase.database().ref('/messages/' + date + '/' + message.key).remove();
   };
 
   // 
   $scope.signOut = function() {
-	currentUser.set(firebase.auth().signOut());
+	  currentUser.set(firebase.auth().signOut());
   };
   
   // how much messages will be showed
   $scope.messagesLimit = {
-	default: 5,
-	getMore: function() {
-		$scope.messagesLimit.default += 5;
-	},
-	getLess: function() {
-		$scope.messagesLimit.default -= 5;
-	},
-	total: 0
-  };
-  $scope.showMoreMessages = function() {
-	  $scope.messagesLimit += 5;
+  	default: 6,
+  	getMore: function() {
+  		$scope.messagesLimit.default += 5;
+  	},
+  	getLess: function() {
+  		$scope.messagesLimit.default -= 5;
+  	},
+  	total: 0
   };
 
-  var updateMessages = setInterval(function() {
+	$scope.edit = function(date, message) {
+		if (message.username == firebase.auth().currentUser.displayName) {
+			var editedMessage = message.message;
+			editedMessage = prompt('Edit', editedMessage);
+			firebase.database().ref('/messages/' + date + '/' + message.key + '/message/').set(editedMessage);
+		} else {
+			console.log('Access denied')
+		};
+	};
+
+	$scope.test = function(item) {
+		console.log(item);
+		console.log($scope.messagesLimit.total);
+	};
+
 	getMessageRef();
-	$scope.$apply();
-    }, 1000);
 
+	$scope.getInfo = function(message) {		
+		currentMessage.set(message);
+	};
+	
 }]);

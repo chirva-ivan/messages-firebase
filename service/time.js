@@ -12,7 +12,7 @@ var Time = {
     if( dd < 10 ) { dd ='0'+dd }; 
     if( mm < 10 ) { mm ='0'+mm };
 
-    return today = yyyy+'/'+mm+'/'+dd;
+    return today = yyyy+'-'+mm+'-'+dd;
   },
 
   getTimeText: function() {
@@ -45,6 +45,6 @@ var Time = {
     if (timeRemain < timeMsInOne.hour) return Math.round(timeRemain / timeMsInOne.hour * 59) + ' min ago';
     if (timeRemain < timeMsInOne.day) return Math.round(timeRemain / timeMsInOne.day * 23) + ' h ago';
     if (timeRemain < timeMsInOne.week) return Math.round(timeRemain / timeMsInOne.week * 6) + ' d ago';
-    if (timeRemain < timeMsInOne.month) return Math.round(timeRemain / timeMsInOne.month * 29) + ' month ago';
+    if (timeRemain < timeMsInOne.month) return Math.round(timeRemain / timeMsInOne.month * 29) + ' week ago';
   }
 };
