@@ -1,1 +1,6 @@
-<h1>{{userInfo.username}}</h1>
+<h1>User Information</h1>
+<input ng-model="userInfo.firstName" placeholder="Firstname">
+<input ng-model="userInfo.lastName" placeholder="Lastname">
+<input ng-model="userInfo.email" placeholder="Email">
+<input ng-model="userInfo.homeTown" placeholder="Hometown">
+<a href='#/chat' ng-click="add()" class="btn text-center">Update informatiom</a>

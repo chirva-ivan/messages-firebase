@@ -75,4 +75,7 @@ app.controller('loginCtrl', ['$scope', '$location', 'currentUser', function($sco
   	  });
   };
 
+	$scope.email = 'ivan@m.ru';
+	$scope.password = '111111';
+
 }]);

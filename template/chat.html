@@ -1,20 +1,20 @@
 <form ng-focus="sendMessage()">
-	<h1>Current user: {{currentUser.displayName}}</h1>
+	<h1>Current user: <a href='#/{{currentUser.displayName}}'>{{currentUser.info.firstName || currentUser.displayName}}</a></h1>
 	<a href='#/' ng-click="signOut()" class="btn text-center">Logout</a>
 	<input type="text" ng-model="messagePost" placeholder="Your Message Here" class="form-control text-center" id="message-box">
 	<input type="submit" value="Send" ng-click="sendMessage()" class="btn btn-default">
-	<div ng-click='test()'>test</div>
 	<div ng-repeat="day in messages | orderObjectBy:'date':true">
 		<span class="row">{{day.date}}</span>
 		<table class="table table-striped">
-			<tr ng-repeat="message in day | orderObjectBy:'dateMS':true" ng-if ="$index < messagesLimit.default">		
-				<td><span><a href='#/{{message.username}}' ng-click='getInfo(message)'>{{message.username}}</a>:</span></td>
+			<tr ng-repeat="message in day | orderObjectBy:'dateMS':true | limitTo:quantity.default">		
+				<td><span>{{message.userInfo.firstName || message.displayName}} {{message.userInfo.lastName}}:</span></td>
 				<td><span ng-click="edit(day.date, message)" tooltip-placement="top" uib-tooltip="Click to edit"><b>{{message.message}}</b></span></td>
 				<td><span>{{message.dateText}}</span></td>
 				<td><button ng-click="remove(day.date, message)" class="btn btn-default">x</button></td>
 			</tr>			
 		</table>
+		<a href='' ng-click="quantity.getMore()" class="btn text-center">Show More</a>
+		<a href='' ng-click="quantity.getLess()" class="btn text-center" ng-hide="quantity.default <= 5">Show Less</a>
 	</div>
-	<a href='' ng-click="messagesLimit.getMore()" class="btn text-center">Show More</a>
-	<a href='' ng-click="messagesLimit.getLess()" class="btn text-center" ng-hide="messagesLimit.default <= 6">Show Less</a>
+
 </form>
