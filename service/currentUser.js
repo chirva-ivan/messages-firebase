@@ -1,3 +1,4 @@
+// Сервис необходим для инициализации текущего пользователя между шаблонами.
 app.service('currentUser', function() {
 	var currentUser = {};
 

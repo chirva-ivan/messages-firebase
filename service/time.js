@@ -1,4 +1,6 @@
+// Переменная Time с различными методами для получения разных форматов текущего времени.
 var Time = {
+
   now: function() {
     return Date.now();
   },
@@ -28,8 +30,11 @@ var Time = {
     return today = hours+':'+minutes+':'+seconds;
   },
 
-  // how much time has passed after sending a message
+  // Метод определяем прошедшее время с момента отправки сообщения.
+  // Вызывался "на месте" через call().
   getTimeAgo: function() {
+    
+    // У объекта должно быть свойство dateMS для корректной работы.
     var timeRemain = Date.now() - this.dateMS;
     var timeMsInOne = {
       second: 1000,

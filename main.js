@@ -1,1 +1,1 @@
-var app = angular.module("messageApp", ['ngRoute', 'ui.bootstrap']);
+var app = angular.module("messageApp", ['ngRoute', 'ui.bootstrap', 'infinite-scroll']);

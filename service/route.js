@@ -11,5 +11,8 @@ app.config(function($routeProvider, $locationProvider) {
 		.when('/:username', {
 			templateUrl: 'template/userinfo.html',
 			controller: 'userinfoCtrl'
-		});
+		})
+		.otherwise({
+			redirectTo: '/'
+      		});
 });

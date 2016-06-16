@@ -5,3 +5,8 @@ input {
 table {
 	margin: 10px 0px 0px 0px;
 }
+
+.wrapper {
+	/*max-width: 360px;*/
+	margin: auto;
+}

@@ -1,4 +1,4 @@
-// Initialize Firebase
+// Инициализация Firebase
 var config = {
   apiKey: "AIzaSyAgvZj9SDTB6RAzDZC85CGqylm5M2U8oPM",
   authDomain: "blinding-torch-9498.firebaseapp.com",

@@ -1,20 +1,21 @@
+// Контроллер входа.
 app.controller('loginCtrl', ['$scope', '$location', 'currentUser', function($scope, $location, currentUser) {
 	
-  // user create function	
+  // Функция регистрации нового пользователя.
   $scope.createUser = function() {
     firebase.auth().createUserWithEmailAndPassword($scope.emailNew, $scope.passwordNew)
 
-  	// error message
+  	// Ловим ошибки.
   	.catch(function(error) {
   		alert(error);
 
-  	// add a name for just created user
+  	// Сохраняем имя пользователя.
   	}).then(function(userData) {
     		userData.updateProfile({
     			displayName: $scope.usernameNew
     	})
 
-  	// make input fields empty
+  	// Обнуляем поля ввода.
   	}).then(function() {		
   		$scope.usernameNew = '';
   		$scope.emailNew = '';
@@ -23,53 +24,58 @@ app.controller('loginCtrl', ['$scope', '$location', 'currentUser', function($sco
   	});
   };
 
-  // user sign in function
+  // Функция входа.
   $scope.signIn = function() {
     firebase.auth().signInWithEmailAndPassword($scope.email, $scope.password)
 	
-  	// error message
+  	// Ловим ошибки.
   	.catch(function(error) {
   		alert(error);	
 	
-  	// we need currentUser to store current signin user
+  	// Сохраняем информацию о текущем пользователе в сервисе currentUser и
+	// и присваиваем локальной переменной эту же информацию.
   	}).then(function() {
   		currentUser.set(firebase.auth().currentUser);
 		$scope.currentUser = currentUser.get();
   		console.log('Sign as: ' + $scope.currentUser.displayName);
 
   	}).then(function() {
-		// make input fields empty
+
+		// Обнуляем поля ввода.
   		$scope.email = '';
   		$scope.password = '';
 
-		// go to chat template
+		// Переходим в шаблон чата.
 		$location.path('/chat');
   		$scope.$apply();
   	});
   };
 
-  // sign in anonymously function
+  // Функция анонимного входа.
   $scope.signInAnon = function() {
 
 	firebase.auth().signInAnonymously()
+
+	  // Ловим ошибки.
 	  .catch(function(error) {
   		alert(error);	
 	
   	  }).then(function() {
 
+  		// Сохраняем информацию о текущем пользователе в сервисе currentUser и
+		// и присваиваем локальной переменной эту же информацию.
 		currentUser.set(firebase.auth().currentUser);
 		$scope.currentUser = currentUser.get();
 
+		// Изменяем отображаемое имя.
 		Object.defineProperty($scope.currentUser, 'displayName', {
 			writable: true,
 			value: 'Anonymous'
 		});
-		Object.defineProperty($scope.currentUser, 'email', {
-			writable: true,
-			value: ''
-		});
+
 		console.log('Sign as: ' + $scope.currentUser.displayName);
 
+		// Переходим в шаблон чата.
 		$location.path('/chat');
 		$scope.$apply();
   	  });
